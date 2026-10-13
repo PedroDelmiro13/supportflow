@@ -11,10 +11,14 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.supportflow.enums.UserRole;
 
 @Entity
 @Table(name = "usuarios")
@@ -46,6 +50,10 @@ public class Usuario implements UserDetails {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime dataCriacao;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    private UserRole role;
+
     @PrePersist
     protected void aoCriar() {
         if (dataCriacao == null) {
@@ -59,12 +67,12 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     @Override
     public @Nullable String getPassword() {
-        throw new UnsupportedOperationException("Unimplemented method 'getPassword'");
+        return this.senhaHash;
     }
 
     @Override
