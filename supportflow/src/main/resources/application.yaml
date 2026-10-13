@@ -3,12 +3,12 @@ spring:
     name: supportflow
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://172.23.13.89:5432/postgres}
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/supportflow}
     username: postgres
-    password: Postgres#2025
+    password: 123479
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     show-sql: true
