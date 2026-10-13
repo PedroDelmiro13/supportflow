@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SupportFlow - Chamados</title>
+    
+    <link rel="stylesheet" href="styles/global.css">
+    <link rel="stylesheet" href="styles/chamados.css">
+</head>
+<body>
+    <header class="top-nav">
+        <div class="nav-container">
+            <h1>SupportFlow</h1>
+            <button id="logout-btn" class="btn-secondary">Sair</button>
+        </div>
+    </header>
+
+    <main class="container-chamados">
+        <!-- Secção de Criação de Chamado -->
+        <section class="card-section">
+            <h2>Abrir Novo Chamado</h2>
+            <form id="create-ticket-form">
+                <div class="input-group">
+                    <label for="ticket-title">Título</label>
+                    <input type="text" id="ticket-title" placeholder="Resumo do problema">
+                    <span class="error-message" id="ticket-title-error"></span>
+                </div>
+                <div class="input-group">
+                    <label for="ticket-desc">Descrição</label>
+                    <textarea id="ticket-desc" rows="4" placeholder="Detalhes do chamado..."></textarea>
+                    <span class="error-message" id="ticket-desc-error"></span>
+                </div>
+                <button type="submit" class="btn-primary">Criar Chamado</button>
+            </form>
+        </section>
+
+        <!-- Secção de Listagem de Chamados -->
+        <section class="card-section">
+            <h2>Os Meus Chamados</h2>
+            <div id="tickets-container" class="tickets-grid">
+                <!-- Os chamados serão gerados aqui pelo JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <script src="js/chamados.js"></script>
+</body>
