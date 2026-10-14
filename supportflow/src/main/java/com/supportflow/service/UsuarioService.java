@@ -1,7 +1,7 @@
 
 package com.supportflow.service;
 
-
+import com.supportflow.enums.UserRole;
 import com.supportflow.dto.CadastroUsuarioRequest;
 import com.supportflow.entity.Usuario;
 import com.supportflow.exception.EmailJaCadastradoException;
@@ -32,6 +32,7 @@ public class UsuarioService {
         usuario.setNome(request.nome().trim());
         usuario.setEmail(email);
         usuario.setSenhaHash(passwordEncoder.encode(request.senha()));
+        usuario.setRole(UserRole.USER);
 
         return usuarioRepository.save(usuario);
     }
