@@ -12,7 +12,7 @@ import com.supportflow.auth.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
