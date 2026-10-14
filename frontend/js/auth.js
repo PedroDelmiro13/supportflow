@@ -1,3 +1,6 @@
+const API_BASE_URL = "http://localhost:8080";
+const TOKEN_STORAGE_KEY = "supportflow_token";
+
 document.addEventListener("DOMContentLoaded", () => {
     const loginScreen = document.getElementById("login-screen");
     const registerScreen = document.getElementById("register-screen");
@@ -6,46 +9,76 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("login-form");
     const registerForm = document.getElementById("register-form");
 
-    // Navegação entre telas
-    goToRegister.addEventListener("click", (e) => {
-        e.preventDefault();
+    const isRegisterMode = new URLSearchParams(window.location.search).get("mode") === "register";
+
+    if (sessionStorage.getItem(TOKEN_STORAGE_KEY) && !isRegisterMode) {
+        window.location.href = "chamados.html";
+        return;
+    }
+
+    if (isRegisterMode) {
+        loginScreen.classList.add("hidden");
+        registerScreen.classList.remove("hidden");
+    }
+
+    goToRegister.addEventListener("click", (event) => {
+        event.preventDefault();
+        clearFeedback();
         loginScreen.classList.add("hidden");
         registerScreen.classList.remove("hidden");
     });
 
-    goToLogin.addEventListener("click", (e) => {
-        e.preventDefault();
+    goToLogin.addEventListener("click", (event) => {
+        event.preventDefault();
+        clearFeedback();
         registerScreen.classList.add("hidden");
         loginScreen.classList.remove("hidden");
     });
 
-    // Funções auxiliares de erro visual
     function showError(inputId, message) {
-        const inputElement = document.getElementById(inputId);
-        const errorElement = document.getElementById(`${inputId}-error`);
-        inputElement.classList.add("error");
-        errorElement.textContent = message;
+        document.getElementById(inputId).classList.add("error");
+        document.getElementById(`${inputId}-error`).textContent = message;
     }
 
     function clearErrors(form) {
-        const inputs = form.querySelectorAll("input");
-        const errors = form.querySelectorAll(".error-message");
-        inputs.forEach(input => input.classList.remove("error"));
-        errors.forEach(error => error.textContent = "");
+        form.querySelectorAll("input").forEach((input) => input.classList.remove("error"));
+        form.querySelectorAll(".error-message").forEach((error) => error.textContent = "");
+    }
+
+    function setFeedback(id, message, type) {
+        const feedback = document.getElementById(id);
+        feedback.textContent = message;
+        feedback.className = `form-feedback ${type}`;
+    }
+
+    function clearFeedback() {
+        ["login-feedback", "register-feedback"].forEach((id) => {
+            const feedback = document.getElementById(id);
+            feedback.textContent = "";
+            feedback.className = "form-feedback";
+        });
     }
 
     function isValidEmail(email) {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
+        return /^\S+@\S+\.\S+$/.test(email);
     }
 
-    // Processamento do Login
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
+    async function getErrorMessage(response) {
+        try {
+            const body = await response.json();
+            return body.message || body.mensagem || "Não foi possível concluir a operação.";
+        } catch {
+            return "Não foi possível concluir a operação.";
+        }
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
         clearErrors(loginForm);
+        clearFeedback();
 
         const email = document.getElementById("login-email").value.trim();
-        const password = document.getElementById("login-password").value.trim();
+        const senha = document.getElementById("login-password").value;
         let isValid = true;
 
         if (!email) {
@@ -55,35 +88,44 @@ document.addEventListener("DOMContentLoaded", () => {
             showError("login-email", "Digite um e-mail válido.");
             isValid = false;
         }
-
-        if (!password) {
+        if (!senha) {
             showError("login-password", "A senha é obrigatória.");
             isValid = false;
         }
+        if (!isValid) return;
 
-        if (isValid) {
-            // Estrutura pronta para a futura integração (POST /auth/login)
-            const loginData = { email, password };
-            console.log("Dados prontos para envio (Login):", loginData);
-            // Futuramente: chamar função do arquivo api.js passando loginData
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, senha })
+            });
+            if (!response.ok) throw new Error(await getErrorMessage(response));
+
+            const { token } = await response.json();
+            if (!token) throw new Error("A API não retornou o token de acesso.");
+
+            sessionStorage.setItem(TOKEN_STORAGE_KEY, token);
+            window.location.href = "chamados.html";
+        } catch (error) {
+            setFeedback("login-feedback", error.message || "Não foi possível realizar o login.", "error");
         }
     });
 
-    // Processamento do Cadastro
-    registerForm.addEventListener("submit", (e) => {
-        e.preventDefault();
+    registerForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
         clearErrors(registerForm);
+        clearFeedback();
 
-        const name = document.getElementById("register-name").value.trim();
+        const nome = document.getElementById("register-name").value.trim();
         const email = document.getElementById("register-email").value.trim();
-        const password = document.getElementById("register-password").value.trim();
+        const senha = document.getElementById("register-password").value;
         let isValid = true;
 
-        if (!name) {
+        if (!nome) {
             showError("register-name", "O nome é obrigatório.");
             isValid = false;
         }
-
         if (!email) {
             showError("register-email", "O e-mail é obrigatório.");
             isValid = false;
@@ -91,20 +133,36 @@ document.addEventListener("DOMContentLoaded", () => {
             showError("register-email", "Digite um e-mail válido.");
             isValid = false;
         }
-
-        if (!password) {
+        if (!senha) {
             showError("register-password", "A senha é obrigatória.");
             isValid = false;
-        } else if (password.length < 6) {
-            showError("register-password", "A senha deve ter no mínimo 6 caracteres.");
+        } else if (senha.length < 8) {
+            showError("register-password", "A senha deve ter no mínimo 8 caracteres.");
             isValid = false;
         }
+        if (!isValid) return;
 
-        if (isValid) {
-            // Estrutura pronta para a futura integração (POST /users)
-            const registerData = { name, email, password };
-            console.log("Dados prontos para envio (Cadastro):", registerData);
-            // Futuramente: chamar função do arquivo api.js passando registerData
+        try {
+            const token = sessionStorage.getItem(TOKEN_STORAGE_KEY);
+            if (!token) {
+                throw new Error("Faça login para criar um novo usuário.");
+            }
+
+            const response = await fetch(`${API_BASE_URL}/users/create`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ nome, email, senha })
+            });
+            if (!response.ok) throw new Error(await getErrorMessage(response));
+
+            setFeedback("register-feedback", "Cadastro realizado. Agora faça login.", "success");
+            document.getElementById("login-email").value = email;
+            registerForm.reset();
+        } catch (error) {
+            setFeedback("register-feedback", error.message || "Não foi possível realizar o cadastro.", "error");
         }
     });
 });
