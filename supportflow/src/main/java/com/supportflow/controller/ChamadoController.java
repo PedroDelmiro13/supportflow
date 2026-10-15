@@ -1,16 +1,18 @@
+
 package com.supportflow.controller;
 
+import com.supportflow.dto.CadastroChamadoRequest;
+import com.supportflow.dto.CadastroChamadoResponse;
 import com.supportflow.dto.ChamadoResponse;
+import com.supportflow.entity.Chamado;
 import com.supportflow.entity.Usuario;
 import com.supportflow.service.ChamadoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,6 +22,28 @@ import java.util.List;
 public class ChamadoController {
 
     private final ChamadoService chamadoService;
+
+    @PostMapping
+    public ResponseEntity<CadastroChamadoResponse> criar(
+            @Valid @RequestBody CadastroChamadoRequest request,
+            @AuthenticationPrincipal Usuario usuarioAutenticado) {
+
+        Chamado chamado = chamadoService.criar(
+                request,
+                usuarioAutenticado
+        );
+
+        CadastroChamadoResponse response = new CadastroChamadoResponse(
+                chamado.getId(),
+                chamado.getTitulo(),
+                chamado.getDescricao(),
+                chamado.getDataCriacao()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
+    }
 
     @GetMapping
     public ResponseEntity<List<ChamadoResponse>> listar(
