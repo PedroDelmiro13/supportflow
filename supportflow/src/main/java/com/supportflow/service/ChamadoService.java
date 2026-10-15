@@ -36,11 +36,13 @@ public class ChamadoService {
      * Lista somente os chamados do usuário informado,
      * do mais recente para o mais antigo.
      */
+
     @Transactional(readOnly = true)
     public List<ChamadoResponse> listarDoUsuario(Long usuarioId) {
-        return chamadoRepository
-                .findAllByUsuarioIdOrderByDataCriacaoDesc(usuarioId)
-                .stream()
+        List<Chamado> chamados =
+                chamadoRepository.findAllByUsuarioIdOrderByDataCriacaoDesc(usuarioId);
+
+        return chamados.stream()
                 .map(ChamadoResponse::de)
                 .toList();
     }
