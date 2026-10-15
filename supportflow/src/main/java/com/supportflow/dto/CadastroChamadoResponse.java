@@ -1,4 +1,4 @@
-﻿package com.supportflow.dto;
+package com.supportflow.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;

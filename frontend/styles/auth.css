@@ -50,3 +50,17 @@ body {
 .toggle-text a:hover {
     text-decoration: underline;
 }
+
+.form-feedback {
+    min-height: 20px;
+    margin-bottom: 12px;
+    font-size: 0.9em;
+}
+
+.form-feedback.success {
+    color: #22863a;
+}
+
+.form-feedback.error {
+    color: var(--error-color);
+}

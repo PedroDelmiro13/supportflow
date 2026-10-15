@@ -1,8 +1,10 @@
-﻿package com.supportflow.service;
+
+package com.supportflow.service;
 
 import com.supportflow.dto.CadastroChamadoRequest;
 import com.supportflow.entity.Chamado;
 import com.supportflow.entity.Usuario;
+import com.supportflow.exception.ChamadoNaoEncontradoException;
 import com.supportflow.repository.ChamadoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,5 +27,17 @@ public class ChamadoService {
         chamado.setUsuario(usuario);
 
         return chamadoRepository.save(chamado);
+    }
+
+
+    @Transactional
+    public void excluir(Long chamadoId, Long usuarioId) {
+        Chamado chamado = chamadoRepository
+                .findByIdAndUsuarioId(chamadoId, usuarioId)
+                .orElseThrow(() -> new ChamadoNaoEncontradoException(
+                        "Chamado não encontrado."
+                ));
+
+        chamadoRepository.delete(chamado);
     }
 }

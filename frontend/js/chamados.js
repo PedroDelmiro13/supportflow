@@ -1,6 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
+    if (!sessionStorage.getItem("supportflow_token")) {
+        window.location.href = "index.html";
+        return;
+    }
     const createForm = document.getElementById("create-ticket-form");
     const ticketsContainer = document.getElementById("tickets-container");
+    const createUserBtn = document.getElementById("create-user-btn");
     const logoutBtn = document.getElementById("logout-btn");
 
     // Array provisório para simular o retorno da API (Pronto para GET /tickets)
@@ -8,6 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
         { id: 1, title: "Erro na página principal", description: "O botão de submissão não funciona." },
         { id: 2, title: "Alteração de e-mail", description: "Preciso de mudar o e-mail associado à conta." }
     ];
+
+    createUserBtn.addEventListener("click", () => {
+        window.location.href = "index.html?mode=register";
+    });
 
     // Funções de validação visual
     function showError(inputId, message) {

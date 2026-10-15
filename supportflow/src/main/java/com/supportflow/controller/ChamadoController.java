@@ -1,4 +1,5 @@
-﻿package com.supportflow.controller;
+
+package com.supportflow.controller;
 
 import com.supportflow.dto.CadastroChamadoRequest;
 import com.supportflow.dto.CadastroChamadoResponse;
@@ -29,18 +30,25 @@ public class ChamadoController {
                 usuarioAutenticado
         );
 
-        CadastroChamadoResponse response =
-                new CadastroChamadoResponse(
-                        chamado.getId(),
-                        chamado.getTitulo(),
-                        chamado.getDescricao(),
-                        chamado.getDataCriacao()
-                );
+        CadastroChamadoResponse response = new CadastroChamadoResponse(
+                chamado.getId(),
+                chamado.getTitulo(),
+                chamado.getDescricao(),
+                chamado.getDataCriacao()
+        );
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Usuario usuarioAutenticado) {
+
+        chamadoService.excluir(id, usuarioAutenticado.getId());
+
+        return ResponseEntity.noContent().build();
+    }
 }
-
-
