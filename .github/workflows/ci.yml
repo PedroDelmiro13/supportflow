@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feat/pipeline-ci
+      - feature/lint
 
   pull_request:
     branches:
@@ -68,3 +68,28 @@ jobs:
         uses: semgrep/semgrep-action@v1
         with:
           config: auto
+    
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: supportflow
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Dar permissão ao Maven Wrapper
+        run: chmod +x mvnw
+
+      - name: Executar o Checkstyle
+        run: ./mvnw checkstyle:check -Dcheckstyle.config.location=../checkstyle.xml
