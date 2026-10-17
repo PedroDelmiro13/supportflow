@@ -92,4 +92,4 @@ jobs:
         run: chmod +x mvnw
 
       - name: Executar o Checkstyle
-        run: ./mvnw checkstyle:check
+        run: ./mvnw checkstyle:check -Dcheckstyle.config.location=../checkstyle.xml
