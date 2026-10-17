@@ -55,3 +55,16 @@ jobs:
 
       - name: Executar build e testes
         run: ./mvnw clean test
+
+  sast:
+    name: SAST - Semgrep
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Executar Semgrep
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: auto
