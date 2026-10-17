@@ -17,12 +17,13 @@ permissions:
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
-  
+
 jobs:
   build-test:
     name: Build e Testes
     runs-on: ubuntu-latest
     needs: [lint, sast]
+    if: ${{ !cancelled() }}
 
     services:
       postgres:
@@ -107,6 +108,7 @@ jobs:
     name: DAST - OWASP ZAP
     runs-on: ubuntu-latest
     needs: [build-test]
+    if: ${{ !cancelled() }}
     timeout-minutes: 15
 
     services:
