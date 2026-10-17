@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<module name="Checker">
+    <!-- Este arquivo define as regras de estilo para o Checkstyle, ele é simples e foi feito com inteligência artificial -->
+  <property name="severity" value="error"/>
+  <property name="fileExtensions" value="java"/>
+
+  <module name="NewlineAtEndOfFile"/>
+  <module name="FileTabCharacter"/>
+
+  <module name="RegexpSingleline">
+    <property name="format" value="\s+$"/>
+    <property name="message" value="Line has trailing spaces."/>
+  </module>
+
+  <module name="LineLength">
+    <property name="max" value="120"/>
+    <property name="ignorePattern" value="^package.*|^import.*|https?://"/>
+  </module>
+
+  <module name="TreeWalker">
+    <module name="AvoidStarImport"/>
+    <module name="UnusedImports"/>
+    <module name="RedundantImport"/>
+    <module name="NeedBraces"/>
+    <module name="EmptyBlock"/>
+    <module name="ModifierOrder"/>
+  </module>
+</module>
