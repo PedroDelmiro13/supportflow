@@ -106,6 +106,23 @@ python -m http.server 5500
 
 Acesse `http://localhost:5500` no navegador. O frontend, o backend e o PostgreSQL devem permanecer em execução.
 
+### Executar o frontend com Docker
+
+Na raiz do repositório, construa a imagem e inicie o container:
+
+```powershell
+docker build -t supportflow-frontend .\frontend
+docker run --rm -p 5500:80 supportflow-frontend
+```
+
+Acesse `http://localhost:5500`. O Nginx encaminha as chamadas para `/auth`, `/users` e `/tickets` ao backend, por padrão em `http://host.docker.internal:8080`. Para usar outro endereço, defina `BACKEND_URL` ao iniciar o container:
+
+```powershell
+docker run --rm -p 5500:80 -e BACKEND_URL=http://backend:8080 supportflow-frontend
+```
+
+Nesse exemplo, `backend` deve ser o nome DNS do container/serviço do backend e ambos os containers devem estar na mesma rede Docker. Ao executar o backend diretamente na máquina host, mantenha o valor padrão.
+
 ## Endpoints principais
 
 | Método | Endpoint | Finalidade |
