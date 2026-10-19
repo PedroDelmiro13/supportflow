@@ -46,7 +46,7 @@ O **SupportFlow** é uma aplicação web que permite ao usuário criar uma conta
 | Spring Security | Segurança e controle de acesso |
 | JWT | Autenticação por token |
 | PostgreSQL | Banco de dados relacional |
-| Docker Compose | Execução do PostgreSQL em container, com volume e variáveis de ambiente |
+| Docker Compose | Execução do frontend, backend e PostgreSQL em containers |
 | Flyway | Migrações versionadas do banco |
 | Maven | Dependências e execução dos testes |
 | HTML, CSS e JavaScript | Interface web |
@@ -107,6 +107,24 @@ docker compose down -v     # finaliza o banco e apaga os dados
 > Se a senha for alterada no `.env`, execute `docker compose down -v` para recriar o banco.
 
 O container expõe o PostgreSQL na porta `5433` da máquina (porta `5432` dentro do container).
+
+### Executar a aplicação completa com Docker Compose
+
+Com o `.env` configurado, na raiz do repositório execute:
+
+```powershell
+docker compose up --build -d
+docker compose ps
+```
+
+Acesse o frontend em `http://localhost:5500`. O Nginx encaminha as chamadas da API ao serviço `backend` pela rede interna do Compose; o backend conecta ao PostgreSQL pelo serviço `postgres`. A API também fica disponível diretamente em `http://localhost:8080`.
+
+Para parar os serviços sem apagar os dados do banco:
+
+```powershell
+docker compose down
+```
+
 ### 2. Configurar as variáveis de ambiente
 
 No PowerShell, configure as variáveis antes de iniciar o backend. Substitua o valor de exemplo pela senha local do PostgreSQL:
