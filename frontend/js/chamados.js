@@ -1,5 +1,5 @@
 
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = window.SUPPORTFLOW_API_BASE_URL;
 const TOKEN_STORAGE_KEY = "supportflow_token";
 
 document.addEventListener("DOMContentLoaded", () => {
