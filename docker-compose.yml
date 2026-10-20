@@ -36,6 +36,20 @@ services:
     networks:
       - supportflow_net
 
+  frontend:
+    build:
+      context: ./frontend
+    container_name: supportflow-frontend
+    restart: unless-stopped
+    environment:
+      BACKEND_URL: http://backend:8080
+    ports:
+      - "5500:80"
+    depends_on:
+      - backend
+    networks:
+      - supportflow_net
+
 volumes:
   postgres_data:
 
