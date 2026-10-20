@@ -19,6 +19,23 @@ services:
     networks:
       - supportflow_net
 
+  backend:
+    build:
+      context: ./supportflow
+    container_name: supportflow-backend
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - supportflow_net
+
 volumes:
   postgres_data:
 
